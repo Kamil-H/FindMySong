@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 
+apply plugin: 'kotlin-kapt'
+
 apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
@@ -22,13 +24,44 @@ android {
     }
 }
 
+kapt {
+    generateStubs = true
+}
+
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.0.0-beta01'
-    implementation 'androidx.core:core-ktx:1.1.0-alpha04'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "com.google.android.material:material:${versions.material}"
+    implementation "androidx.legacy:legacy-support-v4:${versions.legacy}"
+
+    implementation "androidx.appcompat:appcompat:${versions.appcompat}"
+
+    implementation "androidx.core:core-ktx:${versions.ktx}"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.coroutines}"
+
+    implementation "androidx.lifecycle:lifecycle-runtime:${versions.arch_comp_lifecycle}"
+    implementation "androidx.lifecycle:lifecycle-extensions:${versions.arch_comp_lifecycle}"
+
+    implementation "io.reactivex.rxjava2:rxjava:${versions.rx_java}"
+    implementation "io.reactivex.rxjava2:rxandroid:${versions.rx_android}"
+
+    implementation "com.google.dagger:dagger:${versions.dagger}"
+    implementation "com.google.dagger:dagger-android:${versions.dagger}"
+    implementation "com.google.dagger:dagger-android-support:${versions.dagger}"
+    kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
+    kapt "com.google.dagger:dagger-android-processor:${versions.dagger}"
+
+    implementation "com.squareup.okhttp3:logging-interceptor:${versions.http_interceptor}"
+
+    implementation "com.jakewharton.threetenabp:threetenabp:${versions.threetenabp}"
+
+    implementation "com.squareup.retrofit2:retrofit:${versions.retrofit}"
+    implementation "com.squareup.retrofit2:converter-gson:${versions.retrofit}"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:${versions.retrofit}"
+
+    implementation "com.facebook.stetho:stetho:${versions.stetho}"
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${versions.kotlin}"
+
+    testImplementation "junit:junit:${versions.junit}"
 }
