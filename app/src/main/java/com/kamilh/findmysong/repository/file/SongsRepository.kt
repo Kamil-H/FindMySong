@@ -6,4 +6,5 @@ import io.reactivex.Single
 
 interface SongsRepository {
     fun songs(): Single<Resource<List<Song>>>
+    fun songs(query: String): Single<Resource<List<Song>>>
 }

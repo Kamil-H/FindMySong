@@ -1,6 +1,6 @@
 package com.kamilh.findmysong.di
 
-import com.kamilh.findmysong.views.MainActivity
+import com.kamilh.findmysong.views.main.MainActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 

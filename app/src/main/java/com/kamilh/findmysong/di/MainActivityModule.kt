@@ -1,7 +1,7 @@
 package com.kamilh.findmysong.di
 
 import androidx.appcompat.app.AppCompatActivity
-import com.kamilh.findmysong.views.MainActivity
+import com.kamilh.findmysong.views.main.MainActivity
 import dagger.Module
 import dagger.Provides
 

@@ -45,4 +45,15 @@ class SongsFileRepository @Inject constructor(
             )
         }
     }
+
+    override fun songs(query: String): Single<Resource<List<Song>>> {
+        return songs().map { resource ->
+            when (resource) {
+                is Resource.Data -> Resource.Data(resource.result.filter {
+                    it.artist.contains(query) || it.title.contains(query)
+                })
+                is Resource.Error -> resource
+            }
+        }
+    }
 }
