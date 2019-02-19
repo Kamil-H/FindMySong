@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">FindMySong</string>
+    <string name="RepositoryError_connection">There is no Internet connection</string>
+    <string name="RepositoryError_http">Something went wrong on server side</string>
+    <string name="RepositoryError_disc">An error occurred while reading from disc</string>
+    <string name="RepositoryError_parse">It was impossible to retrieve data from file</string>
 </resources>

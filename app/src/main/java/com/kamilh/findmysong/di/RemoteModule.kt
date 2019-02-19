@@ -3,6 +3,7 @@ package com.kamilh.findmysong.di
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.kamilh.findmysong.BuildConfig
+import com.kamilh.findmysong.repository.remote.ITunesApi
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -14,6 +15,13 @@ import javax.inject.Singleton
 
 @Module
 object RemoteModule {
+
+    @Provides @Singleton @JvmStatic
+    fun provideITunesApi(okHttpClient: OkHttpClient, gson: Gson): ITunesApi = retrofitCreator(
+        "https://itunes.apple.com/search/",
+        okHttpClient,
+        gson
+    ).create(ITunesApi::class.java)
 
     @Provides @Singleton @JvmStatic
     fun provideGson(): Gson {
