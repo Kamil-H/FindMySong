@@ -6,14 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.kamilh.findmysong.R
 import com.kamilh.findmysong.base.BaseFragment
+import com.kamilh.findmysong.extensions.observeNotNull
+import kotlinx.android.synthetic.main.fragment_search.*
 import javax.inject.Inject
 
 class SearchFragment : BaseFragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var viewModel: SearchViewModel
+    private lateinit var adapter: SongAdapter
 
     companion object {
         fun newInstance(): SearchFragment {
@@ -33,10 +37,14 @@ class SearchFragment : BaseFragment() {
     }
 
     private fun setUpView() {
-
+        adapter = SongAdapter { viewModel.itemClicked(it) }
+        recyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = this@SearchFragment.adapter
+        }
     }
 
     private fun setUpObservables() {
-
+        observeNotNull(viewModel.list) { adapter.submitList(it) }
     }
 }
