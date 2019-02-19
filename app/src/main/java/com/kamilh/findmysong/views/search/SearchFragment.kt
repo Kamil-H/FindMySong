@@ -37,7 +37,7 @@ class SearchFragment : BaseFragment() {
     }
 
     private fun setUpView() {
-        adapter = SongAdapter { viewModel.itemClicked(it) }
+        adapter = SongAdapter(viewModel::itemClicked)
         recyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = this@SearchFragment.adapter

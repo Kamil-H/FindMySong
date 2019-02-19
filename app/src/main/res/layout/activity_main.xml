@@ -34,6 +34,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/appbar"
         android:indeterminate="true"
-        android:visibility="gone"
+        android:visibility="visible"
         tools:visibility="visible" />
 </RelativeLayout>
