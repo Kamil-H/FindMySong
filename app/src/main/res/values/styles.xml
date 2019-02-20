@@ -7,6 +7,7 @@
         <item name="android:windowBackground">@drawable/drawable_splash</item>
         <item name="editTextColor">@color/white</item>
         <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:fontFamily">@font/lato_family</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
