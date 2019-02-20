@@ -50,7 +50,7 @@ class SongsFileRepository @Inject constructor(
         return songs().map { resource ->
             when (resource) {
                 is Resource.Data -> Resource.Data(resource.result.filter {
-                    it.artist.contains(query) || it.title.contains(query)
+                    it.artist.contains(query) || it.title?.contains(query) ?: false
                 })
                 is Resource.Error -> resource
             }

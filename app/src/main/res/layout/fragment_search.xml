@@ -6,22 +6,12 @@
     android:layout_height="match_parent"
     android:background="@color/colorPrimary">
 
-    <androidx.core.widget.ContentLoadingProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/chipContainer"
-        android:background="@color/colorPrimary"
-        android:indeterminate="true"
-        android:visibility="visible"
-        tools:visibility="visible" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/chipContainer"
+        android:scrollbars="vertical"
         tools:itemCount="10"
         tools:listitem="@layout/item_song" />
 
@@ -44,8 +34,8 @@
         android:id="@+id/emptyView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimary"
         android:layout_below="@id/chipContainer"
+        android:background="@color/colorPrimary"
         android:visibility="gone">
 
         <TextView
@@ -59,4 +49,14 @@
             android:textColor="@color/colorPrimaryDark"
             android:textSize="50sp" />
     </FrameLayout>
+
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/chipContainer"
+        android:indeterminate="true"
+        android:visibility="visible"
+        tools:visibility="visible" />
 </RelativeLayout>

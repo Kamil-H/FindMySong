@@ -7,7 +7,7 @@ data class SearchSongsResponse(
 
 data class SongResponse(
     val artistName: String,
-    val trackName: String,
+    val trackName: String?,
     val artworkUrl100: String,
     val releaseDate: String
 )

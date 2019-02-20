@@ -14,6 +14,8 @@ import com.kamilh.findmysong.repository.Resource
 import com.kamilh.findmysong.utils.ResourceProvider
 import com.kamilh.findmysong.utils.RxSchedulers
 import com.kamilh.findmysong.utils.SingleLiveEvent
+import io.reactivex.Observable
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class SearchViewModel @Inject constructor(
@@ -34,15 +36,14 @@ class SearchViewModel @Inject constructor(
     val chipConfigs: LiveData<SourceChipGroup.Configuration> = _chipConfigs
 
     private val sources = listOf(Source.Remote, Source.Local, Source.All)
-    private var selectedSource: Source = Source.All
-    private var searchParams = SearchParams(query = Query.All, source = selectedSource)
+    private var searchParams = SearchParams(query = Query.All, source = Source.All)
 
     init {
         search(searchParams)
 
         _chipConfigs.value = SourceChipGroup.Configuration(
             list = sources,
-            selectedIndex = sources.indexOf(selectedSource)
+            selectedIndex = sources.indexOf(Source.All)
         )
     }
 
@@ -73,7 +74,7 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun mapToState(song: Song) = SongViewState(
-        title = song.title,
+        title = song.title ?: "-",
         subtitle = song.artist,
         smallText = song.releaseYear?.toString() ?: "-",
         imageUrl = song.imageUrl,
@@ -91,10 +92,16 @@ class SearchViewModel @Inject constructor(
 
     fun onSource(source: Source?) {
         if (source != null) {
-            selectedSource = source
             search(searchParams.copy(source = source))
         } else {
             onList(listOf())
         }
+    }
+
+    fun queryObservable(observable: Observable<String>) {
+        compositeDisposable += observable
+            .debounce(500, TimeUnit.MILLISECONDS)
+            .observeOn(rxSchedulers.main)
+            .subscribe { search(searchParams.copy(query = if (it.isEmpty()) Query.All else Query.Text(it))) }
     }
 }

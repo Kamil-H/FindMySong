@@ -11,6 +11,7 @@ import com.kamilh.findmysong.R
 import com.kamilh.findmysong.base.BaseFragment
 import com.kamilh.findmysong.extensions.observeNotNull
 import com.kamilh.findmysong.extensions.setShowing
+import io.reactivex.Observable
 import kotlinx.android.synthetic.main.fragment_search.*
 import javax.inject.Inject
 
@@ -61,17 +62,17 @@ class SearchFragment : BaseFragment() {
 
         val menuItem = menu?.findItem(R.id.search)
         val searchView = menuItem?.actionView as SearchView
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                menuItem.collapseActionView()
-                print("submitted: $query")
-                return true
-            }
+        viewModel.queryObservable(Observable.create { source ->
+            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    return true
+                }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                print("changed: $newText")
-                return true
-            }
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    newText?.let { source.onNext(newText) }
+                    return true
+                }
+            })
         })
     }
 }
