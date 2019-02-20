@@ -14,8 +14,6 @@ import com.kamilh.findmysong.repository.Resource
 import com.kamilh.findmysong.utils.ResourceProvider
 import com.kamilh.findmysong.utils.RxSchedulers
 import com.kamilh.findmysong.utils.SingleLiveEvent
-import io.reactivex.Observable
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class SearchViewModel @Inject constructor(
@@ -98,10 +96,7 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    fun queryObservable(observable: Observable<String>) {
-        compositeDisposable += observable
-            .debounce(500, TimeUnit.MILLISECONDS)
-            .observeOn(rxSchedulers.main)
-            .subscribe { search(searchParams.copy(query = if (it.isEmpty()) Query.All else Query.Text(it))) }
+    fun onQuery(query: String) {
+        search(searchParams.copy(query = if (query.isEmpty()) Query.All else Query.Text(query)))
     }
 }
