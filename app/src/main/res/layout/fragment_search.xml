@@ -30,25 +30,21 @@
             app:chipSpacing="10dp" />
     </FrameLayout>
 
-    <FrameLayout
+    <TextView
         android:id="@+id/emptyView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/chipContainer"
+        android:layout_gravity="center"
         android:background="@color/colorPrimary"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:fontFamily="@font/lato_bold"
-            android:text="@string/SearchFragment_empty_text"
-            android:textAlignment="center"
-            android:textAllCaps="true"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="50sp" />
-    </FrameLayout>
+        android:fontFamily="@font/lato_bold"
+        android:gravity="center"
+        android:text="@string/SearchFragment_empty_text"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="50sp"
+        android:visibility="gone" />
 
     <androidx.core.widget.ContentLoadingProgressBar
         android:id="@+id/progressBar"
