@@ -1,9 +1,8 @@
 package com.kamilh.findmysong.views.search
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
@@ -45,6 +44,8 @@ class SearchFragment : BaseFragment() {
             adapter = this@SearchFragment.adapter
         }
         chipGroup.sourceChipCheckedListener = viewModel::onSource
+
+        setHasOptionsMenu(true)
     }
 
     private fun setUpObservables() {
@@ -52,5 +53,25 @@ class SearchFragment : BaseFragment() {
         observeNotNull(viewModel.isLoading) { progressBar.setShowing(it) }
         observeNotNull(viewModel.isEmptyView) { emptyView.isVisible = it }
         observeNotNull(viewModel.chipConfigs) { chipGroup.set(it) }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater?.inflate(R.menu.main_menu, menu)
+
+        val menuItem = menu?.findItem(R.id.search)
+        val searchView = menuItem?.actionView as SearchView
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                menuItem.collapseActionView()
+                print("submitted: $query")
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                print("changed: $newText")
+                return true
+            }
+        })
     }
 }

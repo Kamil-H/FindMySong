@@ -10,6 +10,7 @@ import com.kamilh.findmysong.base.BaseActivity
 import com.kamilh.findmysong.data.Alert
 import com.kamilh.findmysong.extensions.observeNotNull
 import com.kamilh.findmysong.views.search.SearchFragment
+import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
@@ -26,6 +27,8 @@ class MainActivity : BaseActivity() {
         show(SearchFragment.newInstance())
 
         setUpObservables()
+
+        setSupportActionBar(toolbar)
     }
 
     private fun show(fragment: Fragment) {
