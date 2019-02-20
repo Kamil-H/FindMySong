@@ -12,6 +12,7 @@ import com.kamilh.findmysong.R
 import com.kamilh.findmysong.base.BaseFragment
 import com.kamilh.findmysong.extensions.observeNotNull
 import com.kamilh.findmysong.extensions.setShowing
+import io.reactivex.Observable
 import kotlinx.android.synthetic.main.fragment_search.*
 import javax.inject.Inject
 
@@ -76,25 +77,35 @@ class SearchFragment : BaseFragment() {
         val menuItem = menu?.findItem(R.id.search)
         val searchView = menuItem?.actionView as SearchView
         searchView.queryHint = getString(R.string.MainMenu_search_hint)
-        menuItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
-                return true
-            }
+        viewModel.queryObservable(Observable.create { source ->
+            menuItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+                override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                    source.onNext(TextEvent.Opened)
+                    return true
+                }
 
-            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
-                viewModel.onQuery(searchView.query.toString())
-                return true
-            }
-        })
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                menuItem.collapseActionView()
-                return false
-            }
+                override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                    source.onNext(TextEvent.Closed(searchView.query.toString()))
+                    return true
+                }
+            })
+            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    menuItem.collapseActionView()
+                    return false
+                }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                return false
-            }
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    newText?.let { source.onNext(TextEvent.Changed(it)) }
+                    return false
+                }
+            })
         })
     }
+}
+
+sealed class TextEvent {
+    object Opened : TextEvent()
+    class Changed(val text: String) : TextEvent()
+    class Closed(val text: String) : TextEvent()
 }

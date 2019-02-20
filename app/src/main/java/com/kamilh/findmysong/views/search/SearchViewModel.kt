@@ -14,6 +14,7 @@ import com.kamilh.findmysong.repository.Resource
 import com.kamilh.findmysong.utils.ResourceProvider
 import com.kamilh.findmysong.utils.RxSchedulers
 import com.kamilh.findmysong.utils.SingleLiveEvent
+import io.reactivex.Observable
 import javax.inject.Inject
 
 class SearchViewModel @Inject constructor(
@@ -37,6 +38,7 @@ class SearchViewModel @Inject constructor(
 
     private val sources = listOf(Source.Remote, Source.Local, Source.All)
     private var searchParams = SearchParams(query = Query.All, source = Source.All)
+    private var lastTextEvent: TextEvent? = null
 
     init {
         updateSource(Source.All)
@@ -121,8 +123,20 @@ class SearchViewModel @Inject constructor(
         search(searchParams.copy(source = source))
     }
 
-    fun onQuery(query: String) {
-        search(searchParams.copy(query = if (query.isEmpty()) Query.All else Query.Text(query)))
+    fun queryObservable(observable: Observable<TextEvent>) {
+        compositeDisposable += observable
+            .observeOn(rxSchedulers.main)
+            .filter { !((lastTextEvent is TextEvent.Closed || lastTextEvent is TextEvent.Opened) && it is TextEvent.Changed && it.text.isEmpty()) }
+            .doOnNext { lastTextEvent = it }
+            .subscribe {
+                search(searchParams.copy(
+                    query = when (it) {
+                        TextEvent.Opened -> searchParams.query
+                        is TextEvent.Changed -> if (it.text.isEmpty()) Query.All else Query.Text(it.text)
+                        is TextEvent.Closed -> if (it.text.isEmpty()) Query.All else Query.Text(it.text)
+                    }
+                ))
+            }
     }
 
     fun onSaveInstance(): Pair<Source, String?> =
