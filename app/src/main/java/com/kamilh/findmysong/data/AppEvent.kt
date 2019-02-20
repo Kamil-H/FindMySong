@@ -4,8 +4,6 @@ sealed class AppEvent
 
 sealed class Navigation: AppEvent()
 
-class Loading(val isLoading: Boolean): AppEvent()
-
 data class Alert(
     val title: String,
     val message: String,

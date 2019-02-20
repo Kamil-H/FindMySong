@@ -9,9 +9,7 @@ import com.kamilh.findmysong.R
 import com.kamilh.findmysong.base.BaseActivity
 import com.kamilh.findmysong.data.Alert
 import com.kamilh.findmysong.extensions.observeNotNull
-import com.kamilh.findmysong.extensions.setShowing
 import com.kamilh.findmysong.views.search.SearchFragment
-import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
@@ -39,7 +37,6 @@ class MainActivity : BaseActivity() {
 
     private fun setUpObservables() {
         observeNotNull(viewModel.alert, this::showDialog)
-        observeNotNull(viewModel.isLoading) { progressBar.setShowing(it) }
     }
 
     private fun dialog(alert: Alert): AlertDialog {

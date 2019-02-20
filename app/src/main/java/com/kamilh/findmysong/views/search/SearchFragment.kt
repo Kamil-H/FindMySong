@@ -4,12 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kamilh.findmysong.R
 import com.kamilh.findmysong.base.BaseFragment
 import com.kamilh.findmysong.extensions.observeNotNull
+import com.kamilh.findmysong.extensions.setShowing
 import kotlinx.android.synthetic.main.fragment_search.*
 import javax.inject.Inject
 
@@ -42,9 +44,13 @@ class SearchFragment : BaseFragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = this@SearchFragment.adapter
         }
+        chipGroup.sourceChipCheckedListener = viewModel::onSource
     }
 
     private fun setUpObservables() {
         observeNotNull(viewModel.list) { adapter.submitList(it) }
+        observeNotNull(viewModel.isLoading) { progressBar.setShowing(it) }
+        observeNotNull(viewModel.isEmptyView) { emptyView.isVisible = it }
+        observeNotNull(viewModel.chipConfigs) { chipGroup.set(it) }
     }
 }

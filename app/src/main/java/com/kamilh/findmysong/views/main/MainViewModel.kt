@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import com.kamilh.findmysong.base.BaseViewModel
 import com.kamilh.findmysong.data.Alert
 import com.kamilh.findmysong.data.AppEvent
-import com.kamilh.findmysong.data.Loading
 import com.kamilh.findmysong.data.Navigation
 import com.kamilh.findmysong.di.AppEventBus
 import com.kamilh.findmysong.extensions.plusAssign
@@ -33,7 +32,6 @@ class MainViewModel @Inject constructor(
     private fun onAppEvent(appEvent: AppEvent) {
         when (appEvent) {
             is Navigation -> TODO()
-            is Loading -> _isLoading.value = appEvent.isLoading
             is Alert -> _alert.value = appEvent
         }
     }

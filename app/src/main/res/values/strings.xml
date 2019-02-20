@@ -5,4 +5,8 @@
     <string name="RepositoryError_disc">An error occurred while reading from disc</string>
     <string name="RepositoryError_parse">It was impossible to retrieve data from file</string>
     <string name="ErrorTitle">Problem occurred</string>
+    <string name="Source_remote">Remote</string>
+    <string name="Source_local">Local</string>
+    <string name="Source_all">All</string>
+    <string name="SearchFragment_empty_text">Nothing to show</string>
 </resources>

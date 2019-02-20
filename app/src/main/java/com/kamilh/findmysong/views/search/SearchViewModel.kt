@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import com.kamilh.findmysong.R
 import com.kamilh.findmysong.base.BaseViewModel
 import com.kamilh.findmysong.data.Alert
-import com.kamilh.findmysong.data.Loading
 import com.kamilh.findmysong.data.Song
 import com.kamilh.findmysong.di.AppEventBus
 import com.kamilh.findmysong.extensions.plusAssign
@@ -14,6 +13,7 @@ import com.kamilh.findmysong.repository.RepositoryError
 import com.kamilh.findmysong.repository.Resource
 import com.kamilh.findmysong.utils.ResourceProvider
 import com.kamilh.findmysong.utils.RxSchedulers
+import com.kamilh.findmysong.utils.SingleLiveEvent
 import javax.inject.Inject
 
 class SearchViewModel @Inject constructor(
@@ -24,26 +24,52 @@ class SearchViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     private val _list = MutableLiveData<List<SongViewState>>()
+    private val _isLoading = SingleLiveEvent<Boolean>()
+    private val _isEmptyView = MutableLiveData<Boolean>()
+    private val _chipConfigs = MutableLiveData<SourceChipGroup.Configuration>()
 
     val list: LiveData<List<SongViewState>> = _list
+    val isLoading: LiveData<Boolean> = _isLoading
+    val isEmptyView: LiveData<Boolean> = _isEmptyView
+    val chipConfigs: LiveData<SourceChipGroup.Configuration> = _chipConfigs
+
+    private val sources = listOf(Source.Remote, Source.Local, Source.All)
+    private var selectedSource: Source = Source.All
+    private var searchParams = SearchParams(query = Query.All, source = selectedSource)
 
     init {
-        search(SearchParams(query = Query.Text("jack johnson"), source = Source.All))
+        search(searchParams)
+
+        _chipConfigs.value = SourceChipGroup.Configuration(
+            list = sources,
+            selectedIndex = sources.indexOf(selectedSource)
+        )
     }
 
     fun search(searchParams: SearchParams) {
+        this.searchParams = searchParams
         compositeDisposable += searchSongs.invoke(searchParams)
             .observeOn(rxSchedulers.main)
             .subscribeOn(rxSchedulers.network)
-            .doOnSubscribe { appEventBus.onNext(Loading(true)) }
+            .doOnSubscribe { _isLoading.value = true }
             .doOnSuccess { result ->
                 when (result) {
-                    is Resource.Data -> _list.value = result.result.map(this::mapToState)
-                    is Resource.Error -> appEventBus.onNext(handle(result.repositoryError))
+                    is Resource.Data -> onList(result.result)
+                    is Resource.Error -> onError(result.repositoryError)
                 }
-                appEventBus.onNext(Loading(false))
+                _isLoading.value = false
             }
             .subscribe()
+    }
+
+    private fun onList(list: List<Song>) {
+        _list.value = list.map(this::mapToState)
+        _isEmptyView.value = list.isEmpty()
+    }
+
+    private fun onError(repositoryError: RepositoryError) {
+        appEventBus.onNext(handle(repositoryError))
+        _isEmptyView.value = true
     }
 
     private fun mapToState(song: Song) = SongViewState(
@@ -51,15 +77,24 @@ class SearchViewModel @Inject constructor(
         subtitle = song.artist,
         smallText = song.releaseYear?.toString() ?: "-",
         imageUrl = song.imageUrl,
-        isRightCornerImage = true
+        isRightCornerImage = song.imageUrl == null
     )
 
     private fun handle(repositoryError: RepositoryError) = Alert(
         title = resourceProvider.getString(R.string.ErrorTitle),
         message = repositoryError.message(resourceProvider)
-    ).addOkAction {  }
+    ).addOkAction { }
 
     fun itemClicked(position: Int) {
 
+    }
+
+    fun onSource(source: Source?) {
+        if (source != null) {
+            selectedSource = source
+            search(searchParams.copy(source = source))
+        } else {
+            onList(listOf())
+        }
     }
 }
