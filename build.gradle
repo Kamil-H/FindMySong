@@ -14,8 +14,10 @@ buildscript {
             'http_interceptor' : '3.9.0',
             'retrofit' : '2.5.0',
             'threetenabp' : '1.1.1',
-            'junit' : '4.12',
             'stetho' : '1.5.0',
+            'test_junit' : '4.12',
+            'test_mockito' : '2.23.0',
+            'test_mockito_inline' : '2.13.0',
             'test_runner' : '1.1.1',
             'test_espresso' : '3.1.1',
     ]
