@@ -2,6 +2,7 @@ package com.kamilh.findmysong.views.main
 
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
@@ -29,6 +30,7 @@ class MainActivity : BaseActivity() {
         setUpObservables()
 
         setSupportActionBar(toolbar)
+        window.setBackgroundDrawable(AppCompatResources.getDrawable(this, R.color.colorPrimaryDark))
     }
 
     private fun show(fragment: Fragment) {
