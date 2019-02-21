@@ -15,5 +15,5 @@ sealed class Query {
 
 @Parcelize
 enum class Source : Parcelable {
-    Remote, Local, All,
+    Remote, Local, All, None
 }

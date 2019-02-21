@@ -14,17 +14,17 @@ class SourceChipGroup @JvmOverloads constructor(
 ) : ChipGroup(context, attrs, defStyleAttr) {
 
     private var configuration: Configuration? = null
-    var sourceChipCheckedListener: ((Source?) -> Unit)? = null
+    var sourceChipCheckedListener: ((Source) -> Unit)? = null
 
     init {
         isSingleSelection = true
         setOnCheckedChangeListener { chipGroup, i ->
             if (configuration != null) {
                 configuration?.let {
-                    sourceChipCheckedListener?.invoke(it.list.elementAtOrNull(i))
+                    sourceChipCheckedListener?.invoke(it.list.elementAtOrNull(i) ?: Source.None)
                 }
             } else {
-                sourceChipCheckedListener?.invoke(null)
+                sourceChipCheckedListener?.invoke(Source.None)
             }
         }
     }
@@ -46,10 +46,11 @@ class SourceChipGroup @JvmOverloads constructor(
         }
     }
 
-    private fun Source.name(): String = when (this) {
+    private fun Source.name(): String? = when (this) {
         Source.Remote -> context.getString(R.string.Source_remote)
         Source.Local -> context.getString(R.string.Source_local)
         Source.All -> context.getString(R.string.Source_all)
+        Source.None -> null
     }
 
     data class Configuration(

@@ -26,6 +26,7 @@ class SearchSongs @Inject constructor(
                     is Resource.Error -> t1
                 }
             })
+            Source.None -> Single.create { it.onSuccess(Resource.Data(listOf())) }
         }
     }
 }

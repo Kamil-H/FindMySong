@@ -93,12 +93,8 @@ class SearchViewModel @Inject constructor(
 
     }
 
-    fun onSource(source: Source?) {
-        if (source != null) {
-            search(searchParams.copy(source = source))
-        } else {
-            onList(listOf())
-        }
+    fun onSource(source: Source) {
+        search(searchParams.copy(source = source))
     }
 
     fun onQuery(query: String) {
