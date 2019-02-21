@@ -25,7 +25,9 @@ class MainActivity : BaseActivity() {
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
 
-        show(SearchFragment.newInstance())
+        if (savedInstanceState == null) {
+            show(SearchFragment.newInstance())
+        }
 
         setUpObservables()
 

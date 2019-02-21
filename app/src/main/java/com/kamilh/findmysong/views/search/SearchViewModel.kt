@@ -37,15 +37,13 @@ class SearchViewModel @Inject constructor(
     private var searchParams = SearchParams(query = Query.All, source = Source.All)
 
     init {
-        search(searchParams)
-
         _chipConfigs.value = SourceChipGroup.Configuration(
             list = sources,
             selectedIndex = sources.indexOf(Source.All)
         )
     }
 
-    fun search(searchParams: SearchParams) {
+    private fun search(searchParams: SearchParams) {
         this.searchParams = searchParams
         compositeDisposable += searchSongs.invoke(searchParams)
             .observeOn(rxSchedulers.main)
@@ -98,5 +96,21 @@ class SearchViewModel @Inject constructor(
 
     fun onQuery(query: String) {
         search(searchParams.copy(query = if (query.isEmpty()) Query.All else Query.Text(query)))
+    }
+
+    fun onSaveInstance(): Pair<Source, String?> =
+        Pair(first = searchParams.source, second = (searchParams.query as? Query.Text)?.text)
+
+    fun onRestoreInstance(pair: Pair<Source?, String?>) {
+        search(
+            searchParams.copy(
+                source = pair.first ?: Source.All,
+                query = if (pair.second != null) Query.Text(pair.second!!) else Query.All
+            )
+        )
+        _chipConfigs.value = SourceChipGroup.Configuration(
+            list = sources,
+            selectedIndex = sources.indexOf(pair.first ?: Source.All)
+        )
     }
 }

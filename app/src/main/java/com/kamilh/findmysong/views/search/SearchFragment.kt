@@ -35,6 +35,10 @@ class SearchFragment : BaseFragment() {
 
         setUpView()
         setUpObservables()
+
+        savedInstanceState?.let {
+            viewModel.onRestoreInstance(Pair(first = it.getParcelable("source"), second = it.getString("query")))
+        }
     }
 
     private fun setUpView() {
@@ -53,6 +57,14 @@ class SearchFragment : BaseFragment() {
         observeNotNull(viewModel.isLoading) { progressBar.setShowing(it) }
         observeNotNull(viewModel.isEmptyView) { emptyView.isVisible = it }
         observeNotNull(viewModel.chipConfigs) { chipGroup.set(it) }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        viewModel.onSaveInstance().let {
+            outState.putParcelable("source", it.first)
+            outState.putString("query", it.second)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
