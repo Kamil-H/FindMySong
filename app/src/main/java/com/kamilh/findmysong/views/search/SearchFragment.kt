@@ -2,6 +2,7 @@ package com.kamilh.findmysong.views.search
 
 import android.os.Bundle
 import android.view.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
@@ -54,6 +55,7 @@ class SearchFragment : BaseFragment() {
 
     private fun setUpObservables() {
         observeNotNull(viewModel.list) { adapter.submitList(it) }
+        observeNotNull(viewModel.title) { (activity as? AppCompatActivity)?.supportActionBar?.title = it }
         observeNotNull(viewModel.isLoading) { progressBar.setShowing(it) }
         observeNotNull(viewModel.isEmptyView) { emptyView.isVisible = it }
         observeNotNull(viewModel.chipConfigs) { chipGroup.set(it) }
@@ -73,6 +75,7 @@ class SearchFragment : BaseFragment() {
 
         val menuItem = menu?.findItem(R.id.search)
         val searchView = menuItem?.actionView as SearchView
+        searchView.queryHint = getString(R.string.MainMenu_search_hint)
         menuItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
                 return true

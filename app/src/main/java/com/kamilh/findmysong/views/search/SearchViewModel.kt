@@ -24,11 +24,13 @@ class SearchViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     private val _list = MutableLiveData<List<SongViewState>>()
+    private val _title = MutableLiveData<String>()
     private val _isLoading = SingleLiveEvent<Boolean>()
     private val _isEmptyView = MutableLiveData<Boolean>()
     private val _chipConfigs = MutableLiveData<SourceChipGroup.Configuration>()
 
     val list: LiveData<List<SongViewState>> = _list
+    val title: LiveData<String> = _title
     val isLoading: LiveData<Boolean> = _isLoading
     val isEmptyView: LiveData<Boolean> = _isEmptyView
     val chipConfigs: LiveData<SourceChipGroup.Configuration> = _chipConfigs
@@ -45,6 +47,7 @@ class SearchViewModel @Inject constructor(
 
     private fun search(searchParams: SearchParams) {
         this.searchParams = searchParams
+        updateTitle(searchParams.query)
         compositeDisposable += searchSongs.invoke(searchParams)
             .observeOn(rxSchedulers.main)
             .subscribeOn(rxSchedulers.network)
@@ -57,6 +60,10 @@ class SearchViewModel @Inject constructor(
                 _isLoading.value = false
             }
             .subscribe()
+    }
+
+    private fun updateTitle(query: Query) {
+        _title.value = if (query is Query.Text) query.text else resourceProvider.getString(R.string.app_name)
     }
 
     private fun onList(list: List<Song>) {
