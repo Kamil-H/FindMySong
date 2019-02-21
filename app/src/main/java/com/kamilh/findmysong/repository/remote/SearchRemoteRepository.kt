@@ -22,13 +22,14 @@ class SearchRemoteRepository @Inject constructor(
             if (cached != null) {
                 source.onSuccess(Resource.Data(cached))
             }
-            iTunesApi.searchSongs(query).doOnSuccess {
-                val mapped = songsResponseToSongs.toListMapper().map(it.results)
-                searchCache.set(query, mapped)
-                source.onSuccess(Resource.Data(mapped))
-            }.doOnError {
-                source.onSuccess(Resource.Error(RepositoryError.handle(it)))
-            }.subscribe()
+            iTunesApi.searchSongs(query)
+                .subscribe({
+                    val mapped = songsResponseToSongs.toListMapper().map(it.results)
+                    searchCache.set(query, mapped)
+                    source.onSuccess(Resource.Data(mapped))
+                }, {
+                    source.onSuccess(Resource.Error(RepositoryError.handle(it)))
+                })
         }
     }
 }
