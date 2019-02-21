@@ -108,7 +108,7 @@ class SearchViewModel @Inject constructor(
         search(
             searchParams.copy(
                 source = pair.first ?: Source.All,
-                query = if (pair.second != null) Query.Text(pair.second!!) else Query.All
+                query = pair.second?.run { Query.Text(this) } ?: Query.All
             )
         )
         _chipConfigs.value = SourceChipGroup.Configuration(
