@@ -68,4 +68,6 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${versions.kotlin}"
 
     testImplementation "junit:junit:${versions.junit}"
+    androidTestImplementation "androidx.test:runner:${versions.test_runner}"
+    androidTestImplementation "androidx.test.espresso:espresso-core:${versions.test_espresso}"
 }
