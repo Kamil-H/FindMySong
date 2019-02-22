@@ -52,14 +52,15 @@ class SearchViewModel @Inject constructor(
             .observeOn(rxSchedulers.main)
             .subscribeOn(rxSchedulers.network)
             .doOnSubscribe { _isLoading.value = true }
-            .doOnSuccess { result ->
-                when (result) {
-                    is Resource.Data -> onList(result.result)
-                    is Resource.Error -> onError(result.repositoryError)
-                }
-                _isLoading.value = false
-            }
-            .subscribe()
+            .subscribe(this::onResource)
+    }
+
+    private fun onResource(resource: Resource<List<Song>>) {
+        when (resource) {
+            is Resource.Data -> onList(resource.result)
+            is Resource.Error -> onError(resource.repositoryError)
+        }
+        _isLoading.value = false
     }
 
     private fun updateTitle(query: Query) {

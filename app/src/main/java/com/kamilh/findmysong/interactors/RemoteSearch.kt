@@ -14,7 +14,7 @@ class RemoteSearch @Inject constructor(
     override fun invoke(params: Query): Single<Resource<List<Song>>> {
         return when (params) {
             is Query.Text -> searchRepository.search(params.text)
-            Query.All -> Single.create { it.onSuccess(Resource.Data(listOf())) }
+            Query.All -> Single.just(Resource.Data(listOf()))
         }
     }
 }
