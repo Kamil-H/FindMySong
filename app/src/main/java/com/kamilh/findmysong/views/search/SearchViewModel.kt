@@ -39,9 +39,13 @@ class SearchViewModel @Inject constructor(
     private var searchParams = SearchParams(query = Query.All, source = Source.All)
 
     init {
+        updateSource(Source.All)
+    }
+
+    private fun updateSource(source: Source) {
         _chipConfigs.value = SourceChipGroup.Configuration(
             list = sources,
-            selectedIndex = sources.indexOf(Source.All)
+            selectedIndex = sources.indexOf(source)
         )
     }
 
@@ -85,10 +89,29 @@ class SearchViewModel @Inject constructor(
         isRightCornerImage = song.imageUrl == null
     )
 
-    private fun handle(repositoryError: RepositoryError) = Alert(
-        title = resourceProvider.getString(R.string.ErrorTitle),
-        message = repositoryError.message(resourceProvider)
-    ).addOkAction { }
+    private fun handle(repositoryError: RepositoryError): Alert {
+        val alert = Alert(
+            title = resourceProvider.getString(R.string.ErrorTitle),
+            message = repositoryError.message(resourceProvider)
+        )
+
+        if (searchParams.source == Source.All) {
+            return when (repositoryError) {
+                RepositoryError.DiscError, RepositoryError.ParseError -> alert.copy(
+                    message = "${alert.message}. ${resourceProvider.getString(R.string.SearchFragment_retry_with_internet)}",
+                    positiveButton = Alert.Action(resourceProvider.getString(R.string.yes)) { updateSource(Source.Remote) },
+                    negativeButton = Alert.Action(resourceProvider.getString(R.string.no)) { }
+                )
+                else -> alert.copy(
+                    message = "${alert.message}. ${resourceProvider.getString(R.string.SearchFragment_retry_with_local)}",
+                    positiveButton = Alert.Action(resourceProvider.getString(R.string.yes)) { updateSource(Source.Local) },
+                    negativeButton = Alert.Action(resourceProvider.getString(R.string.no)) { }
+                )
+            }
+        }
+
+        return alert.addOkAction { }
+    }
 
     fun itemClicked(position: Int) {
 
@@ -112,9 +135,6 @@ class SearchViewModel @Inject constructor(
                 query = pair.second?.run { Query.Text(this) } ?: Query.All
             )
         )
-        _chipConfigs.value = SourceChipGroup.Configuration(
-            list = sources,
-            selectedIndex = sources.indexOf(pair.first ?: Source.All)
-        )
+        updateSource(pair.first ?: Source.All)
     }
 }
