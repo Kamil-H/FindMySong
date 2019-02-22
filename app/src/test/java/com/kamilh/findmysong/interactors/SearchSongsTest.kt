@@ -1,5 +1,6 @@
 package com.kamilh.findmysong.interactors
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.kamilh.findmysong.extensions.mock
 import com.kamilh.findmysong.extensions.whenever
 import com.kamilh.findmysong.repository.RepositoryError
@@ -11,9 +12,15 @@ import com.kamilh.findmysong.views.search.Query
 import com.kamilh.findmysong.views.search.SearchParams
 import com.kamilh.findmysong.views.search.Source
 import io.reactivex.Single
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TestRule
 
 class SearchSongsTest {
+
+    @Rule
+    @JvmField
+    var rule: TestRule = InstantTaskExecutorRule()
 
     private val localSearch = mock<LocalSearch>()
     private val remoteSearch = mock<RemoteSearch>()

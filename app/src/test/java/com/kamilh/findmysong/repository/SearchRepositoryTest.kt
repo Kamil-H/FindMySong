@@ -1,5 +1,6 @@
 package com.kamilh.findmysong.repository
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.kamilh.findmysong.extensions.mock
 import com.kamilh.findmysong.extensions.whenever
 import com.kamilh.findmysong.repository.remote.ITunesApi
@@ -10,9 +11,15 @@ import com.kamilh.findmysong.utils.any
 import com.kamilh.findmysong.utils.remoteList
 import com.kamilh.findmysong.utils.searchResponse
 import io.reactivex.Single
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TestRule
 
 class SearchRepositoryTest {
+
+    @Rule
+    @JvmField
+    var rule: TestRule = InstantTaskExecutorRule()
 
     private val iTunesApi = mock<ITunesApi>()
     private val searchCache = mock<SearchCache>()

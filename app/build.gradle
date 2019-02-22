@@ -68,6 +68,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${versions.kotlin}"
 
     testImplementation "junit:junit:${versions.test_junit}"
+    testImplementation "android.arch.core:core-testing:${versions.test_arch_core}"
     testImplementation "org.mockito:mockito-core:${versions.test_mockito}"
     testImplementation "org.mockito:mockito-inline:${versions.test_mockito_inline}"
     androidTestImplementation "androidx.test:runner:${versions.test_runner}"

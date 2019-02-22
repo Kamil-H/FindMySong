@@ -39,10 +39,10 @@ val remoteList = listOf(
 
 val localList = listOf(
     Song(
-        title = "You Oughta Know",
-        artist = "Alanis Morissette",
+        title = "Kryptonite",
+        artist = "3 Doors Down",
         imageUrl = null,
-        releaseYear = 1995
+        releaseYear = 2000
     ),
     Song(
         title = "You Oughta Know",
