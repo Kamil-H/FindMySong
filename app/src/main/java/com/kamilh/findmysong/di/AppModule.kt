@@ -2,6 +2,8 @@ package com.kamilh.findmysong.di
 
 import android.content.Context
 import com.kamilh.findmysong.FindMySong
+import com.kamilh.findmysong.repository.database.Songs2Repository
+import com.kamilh.findmysong.repository.database.SongsDatabaseRepository
 import com.kamilh.findmysong.repository.file.SongsFileRepository
 import com.kamilh.findmysong.repository.file.SongsRepository
 import com.kamilh.findmysong.repository.remote.SearchRemoteRepository
@@ -29,6 +31,9 @@ object AppModule {
 
     @Provides @Singleton @JvmStatic
     fun bindSongsRepository(songsFileRepository: SongsFileRepository): SongsRepository = songsFileRepository
+
+    @Provides @Singleton @JvmStatic
+    fun bindSongsRepository(songsFileRepository: SongsDatabaseRepository): Songs2Repository = songsFileRepository
 
     @Provides @Singleton @JvmStatic
     fun bindSearchRepository(searchRemoteRepository: SearchRemoteRepository): SearchRepository = searchRemoteRepository

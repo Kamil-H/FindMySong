@@ -5,28 +5,30 @@ import com.kamilh.findmysong.repository.Resource
 import com.kamilh.findmysong.views.search.SearchParams
 import com.kamilh.findmysong.views.search.Source
 import io.reactivex.Single
-import io.reactivex.functions.BiFunction
 import javax.inject.Inject
 
 class SearchSongs @Inject constructor(
     private val localSearch: LocalSearch,
+    private val databaseSearch: DatabaseSearch,
     private val remoteSearch: RemoteSearch
 ) : SingleInteractor<SearchParams, Resource<List<Song>>> {
 
     override fun invoke(params: SearchParams): Single<Resource<List<Song>>> {
-        return when (params.source) {
-            Source.Remote -> remoteSearch.invoke(params.query)
-            Source.Local -> localSearch.invoke(params.query)
-            Source.All -> Single.zip(localSearch.invoke(params.query), remoteSearch.invoke(params.query), BiFunction { t1, t2 ->
-                when (t1) {
-                    is Resource.Data -> when (t2) {
-                        is Resource.Data -> Resource.Data(t2.result.union(t1.result).toList())
-                        is Resource.Error -> t2
-                    }
-                    is Resource.Error -> t1
-                }
-            })
-            Source.None -> Single.create { it.onSuccess(Resource.Data(listOf())) }
+        val list = params.sources.map { source ->
+            when (source) {
+                Source.Remote -> remoteSearch.invoke(params = params.query)
+                Source.Local -> localSearch.invoke(params = params.query)
+                Source.Database -> databaseSearch.invoke(params = params.query)
+                Source.None -> Single.just(Resource.Data(listOf<Song>()))
+            }
+        }
+        return Single.merge(list).toList().map { resources ->
+            val error = resources.firstOrNull { it is Resource.Error }
+            if (error != null) {
+                 return@map error
+            }
+            val successes = resources.map { it as Resource.Data }.flatMap { it.result }
+            Resource.Data(successes)
         }
     }
 }

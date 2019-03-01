@@ -5,7 +5,7 @@ import kotlinx.android.parcel.Parcelize
 
 data class SearchParams(
     val query: Query = Query.All,
-    val source: Source = Source.Local
+    val sources: Set<Source>
 )
 
 sealed class Query {
@@ -15,5 +15,5 @@ sealed class Query {
 
 @Parcelize
 enum class Source : Parcelable {
-    Remote, Local, All, None
+    Remote, Local, Database, None
 }
