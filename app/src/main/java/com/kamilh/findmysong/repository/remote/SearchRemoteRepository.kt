@@ -1,10 +1,9 @@
 package com.kamilh.findmysong.repository.remote
 
 import com.kamilh.findmysong.data.Song
-import com.kamilh.findmysong.repository.RepositoryError
 import com.kamilh.findmysong.repository.Resource
 import com.kamilh.findmysong.repository.remote.mapper.SongsResponseToSongs
-import com.kamilh.findmysong.repository.toListMapper
+import io.reactivex.Maybe
 import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -16,20 +15,28 @@ class SearchRemoteRepository @Inject constructor(
     private val songsResponseToSongs: SongsResponseToSongs
 ) : SearchRepository {
 
+    private fun fromCache(query: String): Single<Resource<List<Song>>> {
+        return searchCache.
+    }
+
     override fun search(query: String): Single<Resource<List<Song>>> {
-        return Single.create { source ->
-            val cached = searchCache.get(query)
-            if (cached != null) {
-                source.onSuccess(Resource.Data(cached))
+        return searchCache.get(query)
+            .flatMap({ onSuccess ->
+                Maybe.just(onSuccess)
+            }, {
+                Maybe.just(listOf())
+            }, {
+                Maybe.just(listOf())
+            })
+            .flatMapSingle {
+                if (it.isNotEmpty()) {
+                    Single.just(Resource.Data(it))
+                } else {
+                    iTunesApi.searchSongs(query)
+                        .flatMap {
+                            Single.just(Resource.Data(it))
+                        }
+                }
             }
-            iTunesApi.searchSongs(query)
-                .subscribe({
-                    val mapped = songsResponseToSongs.toListMapper().map(it.results)
-                    searchCache.set(query, mapped)
-                    source.onSuccess(Resource.Data(mapped))
-                }, {
-                    source.onSuccess(Resource.Error(RepositoryError.handle(it)))
-                })
-        }
     }
 }
